@@ -1,11 +1,11 @@
 <template>
   <div class="home">
-    <input type="text" v-model="isbn">
-    <button type="button" @click="postZipcodeRequest"></button>
+    <input type="number" v-model="isbn"><br>
+    <button type="button" @click="postZipcodeRequest">検索！</button>
     <div v-if="info">
       <table border="1">
         <tr>
-          <td rowspan="7">
+          <td colspan="2">
             <img :src="info.cover">
           </td>
         </tr>
@@ -16,7 +16,7 @@
           <td colspan="2">{{ info.title }}</td>
         </tr>
         <tr>
-          <th>著者</th><th>ISBN</th>
+          <th>著者</th><th>ISBN-10</th>
         </tr>
         <tr>
           <td>{{ info.author }}</td><td>{{ info.isbn }}</td>
@@ -26,6 +26,9 @@
         </tr>
         <tr>
           <td>{{ info.publisher }}</td><td>{{ info.pubdate }}</td>
+        </tr>
+        <tr v-if="infotext">
+          <td colspan="2">{{ infotext[0].Text }}</td>
         </tr>
       </table>
     </div>
@@ -39,7 +42,8 @@ export default {
   data () {
     return {
       isbn: null,
-      info: null
+      info: null,
+      infotext: null
     }
   },
   components: {
@@ -54,11 +58,10 @@ export default {
       axios.get(url)
       .then(response => {
         this.info = JSON.parse(JSON.stringify(response.data[0].summary))
-        console.log(toString.call(this.info))
-        console.log(this.info)
+        this.infotext = response.data[0].onix.CollateralDetail.TextContent
       })
       .catch(error => {
-        window.alert(error)
+        alert('検索結果：０件')
       })
     }
   }
@@ -68,5 +71,9 @@ export default {
 <style>
 th{
   background-color: rgb(125, 214, 212);
+}
+table{
+  width: 100%;
+  white-space: normal;
 }
 </style>
