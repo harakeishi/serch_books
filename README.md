@@ -1,4 +1,7 @@
-# my-app
+# 本検索
+
+ISBNを使って本を検索するWebAPP
+今後はカメラでバーコードを読み取りたい
 
 ## Project setup
 ```
