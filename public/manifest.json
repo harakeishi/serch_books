@@ -1,6 +1,6 @@
 {
-  "name": "my-app",
-  "short_name": "my-app",
+  "name": "本検索アプリ",
+  "short_name": "本検索アプリ",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",

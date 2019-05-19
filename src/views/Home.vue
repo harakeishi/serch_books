@@ -1,7 +1,13 @@
 <template>
   <div class="home">
     <input type="number" v-model="isbn"><br>
+    <input type="button" @click="oncamch()" value="カメラで読み込む">
     <button type="button" @click="postZipcodeRequest">検索！</button>
+    <div class="aa" v-if="oncam"></div>
+    <div class="cam" v-if="oncam">
+      <input type="button" @click="oncamch()" value="閉じる">
+      <v-quagga :onDetected="logIt" :readerSize="readerSize" aspectRatio="min: 1, max:1" :readerTypes="['ean_reader']" ></v-quagga>　
+    </div>
     <div v-if="info">
       <table border="1">
         <tr>
@@ -37,13 +43,28 @@
 
 <script>
 import axios from 'axios'
+import Vue from 'vue'
+import VueQuagga from 'vue-quaggajs';
+Vue.use(VueQuagga);
+
+// register component 'v-quagga'
 export default {
   name: 'home',
   data () {
     return {
       isbn: null,
       info: null,
-      infotext: null
+      infotext: null,
+      readerSize: {
+        width: 480,
+        height: 220,
+      },
+      detecteds: [],
+      oncam: false,
+      aspectRatio: {
+        min: 1,
+        max: 1
+      }
     }
   },
   components: {
@@ -57,12 +78,24 @@ export default {
       var url = 'https://api.openbd.jp/v1/get?isbn=' + this.isbn
       axios.get(url)
       .then(response => {
+        console.log(response)
         this.info = JSON.parse(JSON.stringify(response.data[0].summary))
         this.infotext = response.data[0].onix.CollateralDetail.TextContent
       })
       .catch(error => {
         alert('検索結果：０件')
       })
+    },
+    oncamch () {
+      if (this.oncam) {
+        this.oncam = false
+      } else {
+        this.oncam = true
+      }
+    },
+    logIt (data) {
+      this.oncam = false
+      this.isbn = data.codeResult.code
     }
   }
 }
@@ -75,5 +108,27 @@ th{
 table{
   width: 100%;
   white-space: normal;
+}
+.cam{
+  width: 350px;
+  height: 350px;
+  position: absolute;
+  margin: 0 auto;
+}
+video{
+  width: 350px;
+  height: 350px;
+}
+canvas{
+  width: 350px;
+  height: 350px;
+}
+.aa{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.48);
 }
 </style>
