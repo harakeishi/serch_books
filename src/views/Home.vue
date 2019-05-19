@@ -6,7 +6,7 @@
     <div class="aa" v-if="oncam"></div>
     <div class="cam" v-if="oncam">
       <input type="button" @click="oncamch()" value="閉じる">
-      <v-quagga :onDetected="logIt" :readerSize="readerSize" aspectRatio="min: 1, max:1" :readerTypes="['ean_reader']" ></v-quagga>　
+      <v-quagga :onDetected="logIt" :readerSize="readerSize" :readerTypes="['ean_reader']" ></v-quagga>　
     </div>
     <div v-if="info">
       <table border="1">
@@ -60,11 +60,7 @@ export default {
         height: 220,
       },
       detecteds: [],
-      oncam: false,
-      aspectRatio: {
-        min: 1,
-        max: 1
-      }
+      oncam: false
     }
   },
   components: {
@@ -78,7 +74,6 @@ export default {
       var url = 'https://api.openbd.jp/v1/get?isbn=' + this.isbn
       axios.get(url)
       .then(response => {
-        console.log(response)
         this.info = JSON.parse(JSON.stringify(response.data[0].summary))
         this.infotext = response.data[0].onix.CollateralDetail.TextContent
       })
@@ -96,6 +91,11 @@ export default {
     logIt (data) {
       this.oncam = false
       this.isbn = data.codeResult.code
+      if (!this.isbn.match('^978') && !this.isbn.match('^979')) {
+        // ISBNかチェックしている。ISBNでなければもう一度撮影
+        this.isbn = null
+        this.oncam = true
+      }
     }
   }
 }
