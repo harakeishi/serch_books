@@ -15,7 +15,7 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 7%;
+  height: 70px;
   background-color: rgb(107, 145, 147);
 }
 p{
